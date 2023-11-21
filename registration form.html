@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration Form</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <style>body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+    
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    label {
+        margin-top: 10px;
+    }
+    
+    input, button, checkbox {
+        margin-bottom: 10px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    
+    button {
+        background-color: #4caf50;
+        color: #fff;
+        cursor: pointer;
+    }
+    
+    button:hover {
+        background-color: #45a049;
+    }
+    
+    #userData {
+        margin-top: 20px;
+    }
+    
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+    
+    th {
+        background-color: #4caf50;
+        color: #fff;
+    }
+    </style>
+</head>
+<body>
+
+<h2>User Registration Form</h2>
+
+<form id="registrationForm">
+    <label for="name">Name:</label>
+    <input required type="text" id="name" name="name" required><br>
+
+    <label for="email">Email:</label>
+    <input required type="email" id="email" name="email" required><br>
+
+    <label for="password">Password:</label>
+    <input required type="password" id="password" name="password" required><br>
+
+    <label for="dob">Date of Birth:</label>
+    <input required type="date" id="dob" name="dob" required max="<?php echo date('Y-m-d', strtotime('-18 years')); ?>" min="<?php echo date('Y-m-d', strtotime('-55 years')); ?>"><br>
+
+    <input required type="checkbox" id="acceptTerms" name="acceptTerms" required>
+    <label for="acceptTerms">I accept the terms and conditions</label><br>
+
+    <button type="button" onclick="registerUser()">Submit</button>
+</form>
+
+<div id="userData">
+    <h2>User Data</h2>
+    <table id="userTable">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Date of Birth</th>
+            <th>Terms Accepted</th>
+        </tr>
+    </table>
+</div>
+
+<script>
+    function registerUser() {
+        var name = document.getElementById('name').value;
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        var dob = document.getElementById('dob').value;
+        var acceptTerms = document.getElementById('acceptTerms').checked;
+
+        // Validate age
+        var dobDate = new Date(dob);
+        var today = new Date();
+        var age = today.getFullYear() - dobDate.getFullYear();
+        if (age < 18 || age > 55) {
+            alert('Age must be between 18 and 55.');
+            return;
+        }
+
+        // Validate email
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Invalid email address.');
+            return;
+        }
+
+        // Store user data in local storage
+        var userData = {
+            name: name,
+            email: email,
+            password: password,
+            dob: dob,
+            acceptTerms: acceptTerms
+        };
+
+        var storedUsers = JSON.parse(localStorage.getItem('users')) || [];
+        storedUsers.push(userData);
+        localStorage.setItem('users', JSON.stringify(storedUsers));
+
+        // Display user data in the table
+        displayUserData();
+    }
+
+    function displayUserData() {
+        var users = JSON.parse(localStorage.getItem('users')) || [];
+        var table = document.getElementById('userTable');
+
+        // Clear previous entries
+        table.innerHTML = "<tr><th>Name</th><th>Email</th><th>Password</th><th>Date of Birth</th><th>Terms Accepted</th></tr>";
+
+        // Display user data in the table
+        for (var i = 0; i < users.length; i++) {
+            var row = table.insertRow(-1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            var cell5 = row.insertCell(4);
+            cell1.innerHTML = users[i].name;
+            cell2.innerHTML = users[i].email;
+            cell3.innerHTML = users[i].password; // Note: In a real application, you should never display passwords like this.
+            cell4.innerHTML = users[i].dob;
+            cell5.innerHTML = users[i].acceptTerms ? 'Yes' : 'No';
+        }
+    }
+</script>
+
+</body>
+</html>
